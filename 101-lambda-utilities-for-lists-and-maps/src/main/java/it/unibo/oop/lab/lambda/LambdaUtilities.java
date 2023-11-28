@@ -1,8 +1,8 @@
 package it.unibo.oop.lab.lambda;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,6 +13,8 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import com.google.common.collect.Sets;
 
 /**
  * This class will contain four utility functions on lists and maps, of which
@@ -93,13 +95,8 @@ public final class LambdaUtilities {
         /*
          * Suggestion: consider Map.merge
          */
-        final Map<R, Set<T>> map = new HashMap<>();
-        list.forEach(t -> {
-            map.merge(op.apply(t), new HashSet<T>(Set.of(t)), (x, y) -> {
-                x.addAll(y);
-                return x;
-            });
-        });
+        final Map<R, Set<T>> map = new LinkedHashMap<>();
+        list.forEach(t -> map.merge(op.apply(t), Set.of(t), Sets::union));
         return map;
     }
 
@@ -121,7 +118,7 @@ public final class LambdaUtilities {
          *
          * Keep in mind that a map can be iterated through its forEach method
          */
-        final Map<K, V> map2 = new HashMap<>();
+        final Map<K, V> map2 = new LinkedHashMap<>();
         map.forEach((k, v) -> {
             map2.put(k, v.orElse(def.get()));
         });
